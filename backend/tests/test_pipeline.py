@@ -64,6 +64,20 @@ def test_realistic_utterances(classifier, text, expected_slot, intent):
     assert result.intent == intent, result.model_dump()
 
 
+@pytest.mark.parametrize(
+    "text",
+    [
+        "I need a cardiologist next tuesday morning",  # was nlu_fallback (0.44) before
+        "i want a dermatologist on friday afternoon",
+        "need ent tomorrow evening",
+    ],
+)
+def test_department_date_and_time_of_day_is_a_booking(classifier, text):
+    result = parse(text, now=NOW, classifier=classifier)
+    assert (result.intent, result.source) == ("book_appointment", "ml"), result.model_dump()
+    assert result.entities.department and result.entities.date and result.entities.time_of_day
+
+
 def test_entities_are_returned_with_the_intent(classifier):
     result = parse(
         "Book me with a dermatologist next Monday at 10 am", now=NOW, classifier=classifier

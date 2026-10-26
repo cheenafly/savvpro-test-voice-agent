@@ -68,6 +68,32 @@ book_appointment:
   - get me an appointment with dr hina
   - i want to visit the clinic for a checkup
   - book me in for next tuesday
+  # department + date + time of day in one breath
+  - i need a dermatologist next friday afternoon
+  - i want an ent specialist tomorrow morning
+  - i need a child specialist on monday evening
+  - i want to see a cardiologist this thursday afternoon
+  - i need an eye doctor next wednesday morning
+  - can i get a dentist on saturday morning
+  - i'd like a gynaecologist next monday afternoon
+  - i need to see a skin doctor tomorrow evening
+  - i want a heart specialist on the 15th in the morning
+  - get me a pediatrician next tuesday afternoon
+  - i need a general physician this friday morning
+  - can i see an orthopedic doctor on wednesday evening
+  - i need the ear nose throat doctor tomorrow afternoon
+  - i would like to see a cardiologist next saturday morning
+  - book a dermatologist for thursday afternoon please
+  - i need a dentist appointment monday morning
+  - my daughter needs a child specialist next friday morning
+  - i want to visit the eye specialist on tuesday afternoon
+  - i need a bone doctor next week on monday morning
+  - can you get me a gp tomorrow morning
+  - i need a cardiology appointment on friday evening
+  - i want to see dr saima on monday morning
+  - i'm looking for a dermatologist next tuesday evening
+  - need a dentist on the 20th in the afternoon
+  - i need to see an ent tomorrow morning if possible
 
 reschedule_appointment:
   - i need to reschedule my appointment

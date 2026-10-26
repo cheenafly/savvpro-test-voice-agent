@@ -1,5 +1,5 @@
 # Shifa Care Clinic — Voice Agent backend
-# Python 3.11 recommended (3.10–3.12 work). Install with:
+# Python 3.14 (see pyproject.toml). Install with:
 #   python -m venv .venv
 #   source .venv/bin/activate        # Windows: .venv\Scripts\activate
 #   pip install --upgrade pip
@@ -23,9 +23,12 @@ rapidfuzz>=3.6                   # fuzzy matching (departments, doctors, intents
 dateparser>=1.2                  # "next Tuesday", "tomorrow", "the 5th"
 pyyaml>=6.0                      # training data + lexicon files
 
-# --- Speech ---
-faster-whisper>=1.0              # speech-to-text (local, CPU)
-piper-tts>=1.2                   # text-to-speech (local). If this fails to install,
+# --- Speech --- (pinned: this combination is tested together, see app/speech/stt.py)
+faster-whisper==1.2.1            # speech-to-text (local, CPU)
+ctranslate2==4.8.4               # faster-whisper's inference engine
+av==19.0.2                       # audio decoding (webm/ogg/wav); we decode ourselves because
+                                 # faster-whisper 1.2.1's decoder breaks on PyAV 19
+piper-tts==1.8.0                 # text-to-speech (local). If this fails to install,
                                  # remove this line — the app falls back to browser speech.
 
 # --- Testing & quality ---
