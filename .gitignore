@@ -28,5 +28,8 @@ dist/
 .idea/
 .vscode/
 
-# Claude Code personal settings
-.claude/settings.local.json
+# local working files
+PLAN.md
+CLAUDE.md
+.claude/
+notes/
