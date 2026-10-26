@@ -271,6 +271,48 @@ def reschedule_appointment(
     return appointment
 
 
+# --- Admin views (UI side panel) ----------------------------------------------
+
+
+def list_slots(
+    session: Session,
+    department: str | None = None,
+    day: date | None = None,
+    limit: int = 200,
+) -> list[Slot]:
+    """Slots (free and booked) in time order, optionally for one department and day."""
+    stmt = (
+        select(Slot)
+        .join(Slot.doctor)
+        .join(Doctor.department)
+        .options(contains_eager(Slot.doctor).contains_eager(Doctor.department))
+        .order_by(Slot.start_time, Doctor.name)
+        .limit(limit)
+    )
+    if department is not None:
+        stmt = stmt.where(func.lower(Department.name) == department.lower())
+    if day is not None:
+        start = datetime.combine(day, time.min)
+        stmt = stmt.where(Slot.start_time >= start, Slot.start_time < start + timedelta(days=1))
+    return list(session.scalars(stmt))
+
+
+def list_upcoming_appointments(
+    session: Session, now: datetime | None = None, limit: int = 50
+) -> list[Appointment]:
+    """Booked appointments that haven't started yet, soonest first."""
+    now = now or clinic_now()
+    return list(
+        session.scalars(
+            select(Appointment)
+            .join(Appointment.slot)
+            .where(Appointment.status == AppointmentStatus.BOOKED, Slot.start_time > now)
+            .order_by(Slot.start_time)
+            .limit(limit)
+        )
+    )
+
+
 # --- session-bound facade ----------------------------------------------------
 
 

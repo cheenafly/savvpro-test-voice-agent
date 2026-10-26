@@ -354,3 +354,32 @@ def test_generate_booking_ref_format():
 
 def test_clinic_now_is_naive():
     assert repo.clinic_now().tzinfo is None
+
+
+# --- admin views -------------------------------------------------------------
+
+
+def test_list_slots_for_department_and_day(seeded):
+    slots = repo.list_slots(seeded, department="ent", day=TUESDAY)
+    assert slots
+    assert {s.doctor.department.name for s in slots} == {"ENT"}
+    assert {s.start_time.date() for s in slots} == {TUESDAY}
+    assert [s.start_time for s in slots] == sorted(s.start_time for s in slots)
+
+
+def test_list_slots_shows_booked_ones(seeded):
+    slot = first_free_slot(seeded)
+    book(seeded, slot)
+    listed = {s.id: s.is_booked for s in repo.list_slots(seeded, "Cardiology", TUESDAY)}
+    assert listed[slot.id] is True
+
+
+def test_list_upcoming_appointments_skips_past_and_cancelled(seeded):
+    early = first_free_slot(seeded, day=REF_MONDAY)
+    kept = book(seeded, first_free_slot(seeded, "ENT"), phone="03001111111")
+    gone = book(seeded, first_free_slot(seeded, "Dermatology"), phone="03002222222")
+    book(seeded, early, phone="03003333333")
+    repo.cancel_appointment(seeded, gone.booking_ref)
+    after_early = early.start_time + timedelta(minutes=1)
+    refs = [a.booking_ref for a in repo.list_upcoming_appointments(seeded, now=after_early)]
+    assert refs == [kept.booking_ref]

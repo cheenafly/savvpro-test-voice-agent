@@ -64,3 +64,41 @@ def call(clinic, classifier):
         return Call(clinic, classifier, now)
 
     return start
+
+
+@pytest.fixture
+def make_conversation(engine, classifier):
+    """A ConversationService over a month of free slots, with fake speech by default."""
+    from sqlalchemy.orm import sessionmaker
+
+    from app.services.conversation import ConversationService
+    from app.services.session_store import SessionStore
+    from tests.fakes import FakeSTT, FakeTTS
+
+    with Session(engine) as db:
+        seed_database(db, start=REF_MONDAY, days=31, prebook_ratio=0.0)
+
+    fake = object()
+
+    def build(stt=fake, tts=fake) -> ConversationService:
+        return ConversationService(
+            session_factory=sessionmaker(bind=engine, expire_on_commit=False),
+            store=SessionStore(),
+            classifier=classifier,
+            stt=FakeSTT() if stt is fake else stt,
+            tts=FakeTTS() if tts is fake else tts,
+            now=lambda: CALL_NOW,
+            seed=0,
+        )
+
+    return build
+
+
+@pytest.fixture
+def client(make_conversation):
+    from fastapi.testclient import TestClient
+
+    from app.main import create_app
+
+    with TestClient(create_app(make_conversation())) as client:
+        yield client
