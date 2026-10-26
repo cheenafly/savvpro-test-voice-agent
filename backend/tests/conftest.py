@@ -31,3 +31,14 @@ def seeded(session):
     """One week of slots starting REF_MONDAY, nothing pre-booked."""
     seed_database(session, start=REF_MONDAY, days=7, prebook_ratio=0.0)
     return session
+
+
+@pytest.fixture(scope="session")
+def classifier(tmp_path_factory):
+    """Intent classifier trained from intents.yaml into a temp dir (not the committed model)."""
+    from app.nlu.classifier import IntentClassifier
+    from app.nlu.train import fit_and_save
+
+    path = tmp_path_factory.mktemp("nlu") / "nlu.joblib"
+    fit_and_save(path)
+    return IntentClassifier(path)

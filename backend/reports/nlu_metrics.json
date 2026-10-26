@@ -1,0 +1,258 @@
+{
+  "trained_at": "2026-10-26T18:51:07+00:00",
+  "sklearn_version": "1.9.1",
+  "n_samples": 1726,
+  "n_intents": 20,
+  "test_size": 0.2,
+  "cv_folds": 5,
+  "model_bytes": 571385,
+  "test_accuracy": 0.9017,
+  "test_macro_f1": 0.9099,
+  "cv_accuracy_mean": 0.9027,
+  "cv_accuracy_std": 0.0108,
+  "cv_macro_f1": 0.9109,
+  "test_per_intent": {
+    "abort": {
+      "precision": 0.9231,
+      "recall": 0.8,
+      "f1-score": 0.8571,
+      "support": 15.0
+    },
+    "affirm": {
+      "precision": 0.9444,
+      "recall": 0.85,
+      "f1-score": 0.8947,
+      "support": 20.0
+    },
+    "book_appointment": {
+      "precision": 0.9286,
+      "recall": 1.0,
+      "f1-score": 0.963,
+      "support": 13.0
+    },
+    "cancel_appointment": {
+      "precision": 1.0,
+      "recall": 0.9,
+      "f1-score": 0.9474,
+      "support": 10.0
+    },
+    "change_request": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 16.0
+    },
+    "check_availability": {
+      "precision": 0.9444,
+      "recall": 0.9444,
+      "f1-score": 0.9444,
+      "support": 18.0
+    },
+    "clinic_hours": {
+      "precision": 0.9231,
+      "recall": 0.8,
+      "f1-score": 0.8571,
+      "support": 15.0
+    },
+    "clinic_location": {
+      "precision": 0.9231,
+      "recall": 0.8,
+      "f1-score": 0.8571,
+      "support": 15.0
+    },
+    "deny": {
+      "precision": 1.0,
+      "recall": 0.8571,
+      "f1-score": 0.9231,
+      "support": 14.0
+    },
+    "emergency": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 14.0
+    },
+    "goodbye": {
+      "precision": 0.9231,
+      "recall": 0.8571,
+      "f1-score": 0.8889,
+      "support": 14.0
+    },
+    "greet": {
+      "precision": 0.9286,
+      "recall": 1.0,
+      "f1-score": 0.963,
+      "support": 13.0
+    },
+    "human_agent": {
+      "precision": 0.9333,
+      "recall": 1.0,
+      "f1-score": 0.9655,
+      "support": 14.0
+    },
+    "inform": {
+      "precision": 0.8889,
+      "recall": 0.8276,
+      "f1-score": 0.8571,
+      "support": 29.0
+    },
+    "list_departments": {
+      "precision": 0.7143,
+      "recall": 1.0,
+      "f1-score": 0.8333,
+      "support": 20.0
+    },
+    "list_doctors": {
+      "precision": 0.875,
+      "recall": 0.875,
+      "f1-score": 0.875,
+      "support": 16.0
+    },
+    "out_of_scope": {
+      "precision": 0.8679,
+      "recall": 0.8846,
+      "f1-score": 0.8762,
+      "support": 52.0
+    },
+    "repeat": {
+      "precision": 1.0,
+      "recall": 0.8182,
+      "f1-score": 0.9,
+      "support": 11.0
+    },
+    "reschedule_appointment": {
+      "precision": 0.8125,
+      "recall": 0.9286,
+      "f1-score": 0.8667,
+      "support": 14.0
+    },
+    "thank_you": {
+      "precision": 0.8667,
+      "recall": 1.0,
+      "f1-score": 0.9286,
+      "support": 13.0
+    }
+  },
+  "cv_per_intent": {
+    "abort": {
+      "precision": 0.9552,
+      "recall": 0.8421,
+      "f1-score": 0.8951,
+      "support": 76.0
+    },
+    "affirm": {
+      "precision": 0.9375,
+      "recall": 0.9184,
+      "f1-score": 0.9278,
+      "support": 98.0
+    },
+    "book_appointment": {
+      "precision": 0.8289,
+      "recall": 0.9844,
+      "f1-score": 0.9,
+      "support": 64.0
+    },
+    "cancel_appointment": {
+      "precision": 0.9375,
+      "recall": 0.9,
+      "f1-score": 0.9184,
+      "support": 50.0
+    },
+    "change_request": {
+      "precision": 0.9595,
+      "recall": 0.8987,
+      "f1-score": 0.9281,
+      "support": 79.0
+    },
+    "check_availability": {
+      "precision": 0.871,
+      "recall": 0.9,
+      "f1-score": 0.8852,
+      "support": 90.0
+    },
+    "clinic_hours": {
+      "precision": 0.9,
+      "recall": 0.863,
+      "f1-score": 0.8811,
+      "support": 73.0
+    },
+    "clinic_location": {
+      "precision": 0.8831,
+      "recall": 0.9067,
+      "f1-score": 0.8947,
+      "support": 75.0
+    },
+    "deny": {
+      "precision": 0.913,
+      "recall": 0.9,
+      "f1-score": 0.9065,
+      "support": 70.0
+    },
+    "emergency": {
+      "precision": 0.9571,
+      "recall": 0.9571,
+      "f1-score": 0.9571,
+      "support": 70.0
+    },
+    "goodbye": {
+      "precision": 0.9552,
+      "recall": 0.9143,
+      "f1-score": 0.9343,
+      "support": 70.0
+    },
+    "greet": {
+      "precision": 0.9683,
+      "recall": 0.9242,
+      "f1-score": 0.9457,
+      "support": 66.0
+    },
+    "human_agent": {
+      "precision": 0.9444,
+      "recall": 0.9714,
+      "f1-score": 0.9577,
+      "support": 70.0
+    },
+    "inform": {
+      "precision": 0.9149,
+      "recall": 0.9021,
+      "f1-score": 0.9085,
+      "support": 143.0
+    },
+    "list_departments": {
+      "precision": 0.8407,
+      "recall": 0.9596,
+      "f1-score": 0.8962,
+      "support": 99.0
+    },
+    "list_doctors": {
+      "precision": 0.8846,
+      "recall": 0.8625,
+      "f1-score": 0.8734,
+      "support": 80.0
+    },
+    "out_of_scope": {
+      "precision": 0.8467,
+      "recall": 0.8435,
+      "f1-score": 0.8451,
+      "support": 262.0
+    },
+    "repeat": {
+      "precision": 0.9412,
+      "recall": 0.8727,
+      "f1-score": 0.9057,
+      "support": 55.0
+    },
+    "reschedule_appointment": {
+      "precision": 0.8784,
+      "recall": 0.9286,
+      "f1-score": 0.9028,
+      "support": 70.0
+    },
+    "thank_you": {
+      "precision": 0.9545,
+      "recall": 0.9545,
+      "f1-score": 0.9545,
+      "support": 66.0
+    }
+  }
+}

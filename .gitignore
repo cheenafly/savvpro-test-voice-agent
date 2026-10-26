@@ -18,6 +18,8 @@ htmlcov/
 *.sqlite3
 backend/models/*
 !backend/models/.gitkeep
+# The NLU model is small (<1 MB) and committed so the app runs without a training step.
+!backend/models/nlu.joblib
 
 # Frontend
 node_modules/

@@ -53,7 +53,12 @@ class Entities(BaseModel):
 
 # --- booking reference & phone ----------------------------------------------
 
-_BOOKING_REF = re.compile(r"\bs\s?c\s?((?:[a-z0-9]\s?){3}[a-z0-9])\b")
+# "sc 4f7k" (the normalizer turns SC-4F7K into this), "s c 4 f 7 k" (spelled out),
+# or "sc4f7k" glued -- glued only with a digit in it, so "screen"/"school" never match.
+_BOOKING_REF = re.compile(
+    r"\bs ?c (?:([a-z0-9]{4})|((?:[a-z0-9] ){3}[a-z0-9]))\b"
+    r"|\bsc(?=[a-z0-9]{0,3}\d)([a-z0-9]{4})\b"
+)
 _PHONE = re.compile(r"(?<![\d+])(?:\+\s?92|92|0)?\s?3\d{2}\s?\d{3}\s?\d{4}(?!\d)")
 
 
@@ -65,7 +70,7 @@ def _extract_booking_ref(text: str) -> tuple[str | None, str]:
     m = _BOOKING_REF.search(text)
     if not m:
         return None, text
-    code = m.group(1).replace(" ", "").upper()
+    code = next(g for g in m.groups() if g).replace(" ", "").upper()
     return f"SC-{code}", _mask(text, m.start(), m.end())
 
 
@@ -410,3 +415,54 @@ def extract_entities(
         if unknown:
             entities.unknown_department = unknown.value
     return entities
+
+
+# --- placeholders for the classifier -----------------------------------------
+
+PLACEHOLDERS = {
+    "booking_ref": "bookingref",
+    "phone": "phonenumber",
+    "date": "somedate",
+    "time": "sometime",
+    "time_of_day": "timeofday",
+    "department": "somedepartment",
+    "doctor": "somedoctor",
+}
+
+
+@lru_cache
+def _department_names_pattern() -> re.Pattern[str]:
+    phrases = [p for entry in load_lexicon()["departments"].values() for p in entry["synonyms"]]
+    alternatives = "|".join(re.escape(p) for p in sorted(phrases, key=len, reverse=True))
+    return re.compile(rf"\b(?:{alternatives})\b")
+
+
+@lru_cache
+def _doctor_names_pattern() -> re.Pattern[str]:
+    parts = {part.lower() for name in default_doctor_names() for part in name.split()[1:]}
+    alternatives = "|".join(sorted(parts, key=len, reverse=True))
+    return re.compile(rf"\b(?:dr|doctor) (?:{alternatives})(?: (?:{alternatives}))?\b")
+
+
+def delexicalize(text: str) -> str:
+    """Replace entity values with placeholder words for the intent classifier.
+
+    "book cardiology on monday at 3" -> "book somedepartment on somedate at sometime".
+    The intent depends on the sentence shape, not on which day or department was
+    named, so this lets a few training examples generalise to every value.
+    """
+    text = _BOOKING_REF.sub(f" {PLACEHOLDERS['booking_ref']} ", text)
+    text = _PHONE.sub(f" {PLACEHOLDERS['phone']} ", text)
+    for _, pattern in _DATE_PATTERNS:
+        text = pattern.sub(f" {PLACEHOLDERS['date']} ", text)
+    for pattern in _TIME_PATTERNS:
+        # Keep the lead-in word ("at 3" -> "at sometime"); only the number is replaced.
+        text = pattern.sub(
+            lambda m: f"{m.string[m.start() : m.start(1)]}{PLACEHOLDERS['time']} ", text
+        )
+    text = _NOON.sub(f" {PLACEHOLDERS['time']} ", text)
+    for tod in _time_of_day_vocabulary():
+        text = re.sub(rf"\b{re.escape(tod.label)}\b", f" {PLACEHOLDERS['time_of_day']} ", text)
+    text = _doctor_names_pattern().sub(f" {PLACEHOLDERS['doctor']} ", text)
+    text = _department_names_pattern().sub(f" {PLACEHOLDERS['department']} ", text)
+    return re.sub(r"\s+", " ", text).strip()

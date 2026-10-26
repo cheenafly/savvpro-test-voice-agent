@@ -208,10 +208,20 @@ def test_not_a_phone(text):
         ("S C 4 F 7 K", "SC-4F7K"),
         ("es see four f seven k", None),  # too garbled: no guess
         ("ref sc9p3q please", "SC-9P3Q"),
+        ("sc 4 f 7 k", "SC-4F7K"),
+        ("SC-ABCD", "SC-ABCD"),
     ],
 )
 def test_booking_ref(text, expected):
     assert extract(text).booking_ref == expected
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["my phone screen is broken", "my son's school", "i'm scared", "scheduled", "scan report"],
+)
+def test_words_starting_with_sc_are_not_booking_refs(text):
+    assert extract(text).booking_ref is None
 
 
 # --- name -----------------------------------------------------------------
