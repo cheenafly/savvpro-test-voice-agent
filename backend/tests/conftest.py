@@ -102,3 +102,15 @@ def client(make_conversation):
 
     with TestClient(create_app(make_conversation())) as client:
         yield client
+
+
+def pytest_collection_modifyitems(config, items):
+    """Tests marked ``slow`` load real speech models: run them with RUN_SLOW=1."""
+    import os
+
+    if os.environ.get("RUN_SLOW") == "1":
+        return
+    skip = pytest.mark.skip(reason="slow: set RUN_SLOW=1 (make test-slow)")
+    for item in items:
+        if "slow" in item.keywords:
+            item.add_marker(skip)

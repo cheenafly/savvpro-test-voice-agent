@@ -14,14 +14,15 @@ from collections.abc import Callable
 from sqlalchemy.orm import Session
 
 from app.clock import clinic_now
+from app.config import Settings, get_settings
 from app.db.repository import ClinicRepository
 from app.dialogue.manager import Decision, DialogueManager
 from app.nlu.classifier import IntentClassifier
 from app.nlu.pipeline import NLUResult, parse
 from app.schemas import DecisionOut, Timings, TurnResponse
 from app.services.session_store import CallSession, HistoryEntry, SessionStore
-from app.speech.stt import SpeechToText, Transcription
-from app.speech.tts import TextToSpeech
+from app.speech.stt import SpeechToText, Transcription, build_initial_prompt, build_stt
+from app.speech.tts import TextToSpeech, build_tts
 
 logger = logging.getLogger(__name__)
 
@@ -169,17 +170,24 @@ def prepare_database(session_factory: Callable[[], Session]) -> None:
             logger.info("empty database: seeded %d slots", summary.slots)
 
 
-def build_conversation_service() -> ConversationService:
+def build_conversation_service(settings: Settings | None = None) -> ConversationService:
     """The real service: on-disk database, trained classifier, speech engines from settings."""
     from app.db.session import SessionLocal
     from app.nlu.classifier import get_classifier
-    from app.speech.tts import NullTTS
 
+    settings = settings or get_settings()
     prepare_database(SessionLocal)
+    with SessionLocal() as db:
+        by_department = ClinicRepository(db).doctors_by_department()
+    prompt = build_initial_prompt(
+        list(by_department), [d for doctors in by_department.values() for d in doctors]
+    )
+    classifier = get_classifier()
+    parse("book me for tomorrow at 10", classifier=classifier)  # warm up the first-call caches
     return ConversationService(
         session_factory=SessionLocal,
         store=SessionStore(),
-        classifier=get_classifier(),
-        stt=None,
-        tts=NullTTS(),
+        classifier=classifier,
+        stt=build_stt(settings, initial_prompt=prompt),
+        tts=build_tts(settings),
     )

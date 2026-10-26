@@ -24,10 +24,22 @@ class Settings(BaseSettings):
     models_dir: Path = BACKEND_DIR / "models"
     nlu_model_path: Path = BACKEND_DIR / "models" / "nlu.joblib"
     reports_dir: Path = BACKEND_DIR / "reports"
+
+    # Speech. Set a provider to "none" to run text-only (the browser then speaks replies).
     stt_provider: str = "faster_whisper"
     stt_model: str = "base.en"
+    stt_device: str = "cpu"
+    stt_compute_type: str = "int8"
     tts_provider: str = "piper"
     tts_voice: str = "en_US-lessac-medium"
+
+    @property
+    def whisper_dir(self) -> Path:
+        return self.models_dir / "whisper"
+
+    @property
+    def piper_voice_path(self) -> Path:
+        return self.models_dir / f"{self.tts_voice}.onnx"
 
     @field_validator("models_dir", "nlu_model_path", "reports_dir")
     @classmethod

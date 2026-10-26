@@ -108,3 +108,54 @@ with `/cost` or `/usage` at the end of each session (and `npx ccusage` for total
   means the coming Monday; offers list date and doctor, which is long when spoken.
 - The emergency reply points callers to 1122 (Pakistan's public Rescue number) on purpose;
   it is the only real-world contact detail in the app.
+
+## Phase 3 follow-up — nearest slots and the requested doctor
+
+- Fixed the known limitation above: when the requested time is taken, the "3 nearest"
+  offer now lists the requested doctor's nearest slots first and only fills the remaining
+  places with other doctors in the department. Repository and conversation tests were
+  checked to fail without the fix.
+
+## Phases 4 and 5 — API, CLI, speech
+
+- **Real incompatibility found by running real audio, not by the tests:** faster-whisper
+  1.2.1 calls `av.open(..., metadata_errors=...)`, which PyAV 19 (installed) removed, so
+  every transcription crashed. The fake-STT API tests could not catch this. Fix: decode the
+  audio ourselves with PyAV (webm/ogg/wav to 16 kHz mono float32) and hand Whisper an array.
+  Checked with Piper WAV and a webm/Opus re-encode, like the browser sends.
+- **Download script failed on macOS:** python.org's Python 3.14 ships without CA
+  certificates, so `urllib` couldn't verify Hugging Face over HTTPS. The script now uses the
+  `certifi` bundle (already installed with httpx) instead of asking the user to change their
+  system.
+- **Startup was contacting Hugging Face** every time Whisper loaded (a revision check, and a
+  140 MB download if the model was missing). Whisper now loads with `local_files_only=True`;
+  a missing model means a warning and text-only mode, and `download_models.py` is the only
+  thing that downloads.
+- **AI test mistakes caught before committing:**
+  - The "multipart without an audio field" test first sent a form-encoded body, so it
+    passed for the wrong reason (it hit the JSON error). It now sends multipart with
+    another field and checks the exact error message.
+  - A filler test (asserting a module didn't import faster-whisper) was removed.
+- **Deviations from the plan:**
+  - The STT/TTS *interfaces* (and `NullTTS`) came in the Phase 4 commit so the audio
+    endpoint could be built and tested with fakes; the real engines came in Phase 5.
+  - Startup creates the tables and seeds the fake clinic if the database is empty, so
+    `make run-backend` and `python -m app.cli` work without `make seed` first.
+  - Extra response fields: `session_id` and `transcript_confidence` (Whisper's average
+    token probability). `audio_mime` is null when there is no audio.
+  - Error codes: unknown/expired session 404; audio when no STT is loaded 503 ("send text
+    instead"); undecodable audio or a bad body 422.
+  - The admin appointments view masks phone numbers (`0300****567`).
+  - Each turn builds a fresh `DialogueManager` bound to that turn's DB session; the reply
+    seed is `session seed + turn number`, so phrasing varies but tests stay deterministic.
+  - The NLU is warmed up once at startup (the first parse took ~145 ms, later ones ~2 ms).
+  - The CLI's loop (`chat()`) takes `read`/`write` functions, so it has its own tests.
+  - Slow tests are skipped unless `RUN_SLOW=1` (`make test-slow`); also skipped if the
+    models aren't downloaded.
+- **Measured on the dev Mac (CPU):** model load ~1.3 s; per turn roughly STT 0.35–0.8 s,
+  NLU 2 ms, dialogue <5 ms, Piper 0.05–0.2 s.
+- **Noticed, not fixed (NLU, Phase 2 territory):** "I need a cardiologist next tuesday
+  morning" was classified `nlu_fallback` (0.44) with the committed model. The booking
+  still worked because the entities carried it, but it is worth more training data.
+- **To do in Phase 7:** pin versions (`faster-whisper`, `av`, `piper-tts`) now that the
+  combination is known to work with the decoder workaround.
