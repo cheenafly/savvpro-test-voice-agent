@@ -113,6 +113,15 @@ def test_taken_slot_offers_three_nearest(call, clinic):
     assert all(abs(s - datetime(2030, 1, 14, 10, 0)).total_seconds() <= 20 * 60 for s in starts)
 
 
+def test_taken_slot_offers_requested_doctor_first(call):
+    c = call()
+    take_slots(c, "Cardiology", FRIDAY, time(11))
+    d = c.say("I'd like to see Dr Saima Rauf on Friday at 11")
+    assert d.state == State.OFFER_SLOTS
+    assert [o.doctor for o in d.frame.candidate_slots] == ["Dr. Saima Rauf"] * 3
+    assert datetime(2030, 1, 11, 11, 0) not in {o.start for o in d.frame.candidate_slots}
+
+
 def test_pick_offered_slot_by_ordinal(call, clinic):
     c = call()
     take_slots(c, "Dermatology", NEXT_MONDAY, time(10))

@@ -117,6 +117,40 @@ def test_find_nearest_free_slots_skips_taken_slot(seeded):
     assert {s.start_time.time() for s in slots} <= {time(9, 40), time(10, 20)}
 
 
+def test_find_nearest_free_slots_prefers_requested_doctor(seeded):
+    around = datetime.combine(TUESDAY, time(10))
+    slots = repo.find_nearest_free_slots(
+        seeded, "ENT", around, now=NOW, doctor="Dr. Mehwish Khalid"
+    )
+    assert len(slots) == 3
+    assert {s.doctor.name for s in slots} == {"Dr. Mehwish Khalid"}
+    # Without a preference, the other doctor's 10:00 slot is just as near.
+    anyone = repo.find_nearest_free_slots(seeded, "ENT", around, now=NOW)
+    assert {s.doctor.name for s in anyone} == {"Dr. Mehwish Khalid", "Dr. Zain Abbas"}
+
+
+def test_find_nearest_free_slots_falls_back_to_other_doctors(seeded):
+    # Dr. Khalid has a single free slot left, days later: it comes first, then
+    # the nearest slots of the other ENT doctor fill the remaining places.
+    around = datetime.combine(TUESDAY, time(10))
+    khalid = [
+        s
+        for s in seeded.scalars(select(Slot).where(Slot.is_booked.is_(False))).all()
+        if s.doctor.name == "Dr. Mehwish Khalid"
+    ]
+    left = max(khalid, key=lambda s: s.start_time)
+    assert left.start_time.date() > TUESDAY + timedelta(days=2)
+    for slot in khalid:
+        slot.is_booked = slot is not left
+    seeded.flush()
+    slots = repo.find_nearest_free_slots(
+        seeded, "ENT", around, now=NOW, doctor="Dr. Mehwish Khalid"
+    )
+    assert slots[0].id == left.id
+    assert [s.doctor.name for s in slots[1:]] == ["Dr. Zain Abbas", "Dr. Zain Abbas"]
+    assert all(abs(s.start_time - around) < timedelta(days=1) for s in slots[1:])
+
+
 def test_find_nearest_free_slots_never_returns_past(seeded):
     now = datetime.combine(TUESDAY, time(12))
     around = datetime.combine(TUESDAY, time(9))

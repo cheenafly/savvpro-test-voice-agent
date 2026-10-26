@@ -122,18 +122,26 @@ def find_nearest_free_slots(
     around_datetime: datetime,
     limit: int = 3,
     now: datetime | None = None,
+    doctor: str | None = None,
 ) -> list[Slot]:
-    """Free future slots in the department closest in time to ``around_datetime``."""
+    """Free future slots in the department closest in time to ``around_datetime``.
+
+    With ``doctor``, that doctor's nearest slots come first and other doctors in the
+    department only fill the remaining places.
+    """
     now = now or clinic_now()
     slots = session.scalars(_free_slots_stmt(department, None, now)).all()
-    return sorted(
-        slots,
-        key=lambda s: (
+
+    def rank(s: Slot):
+        preferred = doctor is None or s.doctor.name.lower() == doctor.lower()
+        return (
+            not preferred,
             abs((s.start_time - around_datetime).total_seconds()),
             s.start_time,
             s.doctor.name,
-        ),
-    )[:limit]
+        )
+
+    return sorted(slots, key=rank)[:limit]
 
 
 def _claim_slot(session: Session, slot_id: int, now: datetime) -> None:
@@ -298,9 +306,9 @@ class ClinicRepository:
             self.session, department, day, time_range, doctor, limit, now=self.now()
         )
 
-    def find_nearest_free_slots(self, department, around_datetime, limit=3):
+    def find_nearest_free_slots(self, department, around_datetime, limit=3, doctor=None):
         return find_nearest_free_slots(
-            self.session, department, around_datetime, limit, now=self.now()
+            self.session, department, around_datetime, limit, now=self.now(), doctor=doctor
         )
 
     def book_slot(self, slot_id, name, phone):

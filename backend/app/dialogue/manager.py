@@ -377,7 +377,9 @@ class DialogueManager:
             if exact:
                 self._choose(frame, _option(exact[0]))
                 return None
-            nearest = self.repo.find_nearest_free_slots(frame.department, wanted)
+            nearest = self.repo.find_nearest_free_slots(
+                frame.department, wanted, doctor=frame.doctor
+            )
             return self._offer(frame, nearest, self.say("slot_taken", when=format_slot(wanted)))
 
         tod = frame.time_of_day
@@ -391,7 +393,7 @@ class DialogueManager:
         if frame.doctor:
             when += f" with {frame.doctor}"
         around = dt.datetime.combine(frame.date, window[0] if window else dt.time(9))
-        nearest = self.repo.find_nearest_free_slots(frame.department, around)
+        nearest = self.repo.find_nearest_free_slots(frame.department, around, doctor=frame.doctor)
         return self._offer(frame, nearest, self.say("nothing_free_then", when=when))
 
     def _offer(self, frame: Frame, slots: list[Slot], intro: str = "") -> str:
@@ -554,7 +556,9 @@ class DialogueManager:
             # Lost a race for the slot: offer the nearest free ones instead.
             taken = frame.chosen_slot
             frame.chosen_slot = None
-            nearest = self.repo.find_nearest_free_slots(taken.department, taken.start)
+            nearest = self.repo.find_nearest_free_slots(
+                taken.department, taken.start, doctor=frame.doctor
+            )
             text = self._offer(frame, nearest, self.say("slot_just_taken"))
             return self._reply(frame, text, action="slot_unavailable")
         except AppointmentNotFoundError:
