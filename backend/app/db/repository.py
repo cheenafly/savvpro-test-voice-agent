@@ -6,6 +6,7 @@ the clock; it defaults to the current clinic-local time.
 """
 
 import random
+from collections.abc import Callable
 from datetime import date, datetime, time, timedelta
 
 from sqlalchemy import Select, func, select, update
@@ -260,3 +261,56 @@ def reschedule_appointment(
         raise
     session.refresh(appointment)
     return appointment
+
+
+# --- session-bound facade ----------------------------------------------------
+
+
+class ClinicRepository:
+    """The repository functions bound to one session and one clock.
+
+    This is what the dialogue manager depends on, so tests can hand it a seeded
+    in-memory database and a pinned "now".
+    """
+
+    def __init__(self, session: Session, now: Callable[[], datetime] = clinic_now):
+        self.session = session
+        self.now = now
+
+    def department_names(self) -> list[str]:
+        return [d.name for d in list_departments(self.session)]
+
+    def doctors_by_department(self, department: str | None = None) -> dict[str, list[str]]:
+        grouped: dict[str, list[str]] = {}
+        for doctor in find_doctors(self.session, department):
+            grouped.setdefault(doctor.department.name, []).append(doctor.name)
+        return grouped
+
+    def doctor_department(self, doctor: str) -> str | None:
+        return self.session.scalar(
+            select(Department.name)
+            .join(Doctor.department)
+            .where(func.lower(Doctor.name) == doctor.lower())
+        )
+
+    def find_free_slots(self, department, day, time_range=None, doctor=None, limit=3):
+        return find_free_slots(
+            self.session, department, day, time_range, doctor, limit, now=self.now()
+        )
+
+    def find_nearest_free_slots(self, department, around_datetime, limit=3):
+        return find_nearest_free_slots(
+            self.session, department, around_datetime, limit, now=self.now()
+        )
+
+    def book_slot(self, slot_id, name, phone):
+        return book_slot(self.session, slot_id, name, phone, now=self.now())
+
+    def get_appointment(self, ref=None, phone=None):
+        return get_appointment(self.session, ref=ref, phone=phone, now=self.now())
+
+    def cancel_appointment(self, ref):
+        return cancel_appointment(self.session, ref)
+
+    def reschedule_appointment(self, ref, new_slot_id):
+        return reschedule_appointment(self.session, ref, new_slot_id, now=self.now())

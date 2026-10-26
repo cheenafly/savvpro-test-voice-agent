@@ -10,30 +10,16 @@ from datetime import date, datetime, time, timedelta
 
 from sqlalchemy.orm import Session
 
+from app.clinic import CLINIC_NAME, OPENING_HOURS, SLOT_MINUTES
 from app.clock import clinic_now
 from app.db.base import Base
 from app.db.models import Appointment, AppointmentStatus, Department, Doctor, Patient, Slot
 from app.db.repository import generate_booking_ref
 from app.db.session import SessionLocal, engine, init_db
 
-CLINIC_NAME = "Shifa Care Clinic"
-SLOT_MINUTES = 20
 SEED_DAYS = 21
 PREBOOK_RATIO = 0.3
 RNG_SEED = 42
-
-# weekday() -> opening periods. Weekdays have a 13:00–14:00 lunch break,
-# Saturday is a half day, Sunday is closed.
-_WEEKDAY_HOURS = [(time(9), time(13)), (time(14), time(17))]
-OPENING_HOURS: dict[int, list[tuple[time, time]]] = {
-    0: _WEEKDAY_HOURS,
-    1: _WEEKDAY_HOURS,
-    2: _WEEKDAY_HOURS,
-    3: _WEEKDAY_HOURS,
-    4: _WEEKDAY_HOURS,
-    5: [(time(9), time(13))],
-    6: [],
-}
 
 DEPARTMENTS: dict[str, tuple[str, list[str]]] = {
     "General Medicine": (
