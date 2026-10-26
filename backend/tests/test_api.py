@@ -53,6 +53,9 @@ def test_full_booking_by_text(client):
         "status": "booked",
     }
 
+    recent = client.get("/api/admin/appointments", params={"order": "recent"}).json()
+    assert recent[0]["booking_ref"] == ref
+
     session = client.get(f"/api/sessions/{sid}").json()
     assert [h["role"] for h in session["history"]] == ["agent"] + ["caller", "agent"] * 4
     assert session["frame"]["booking_ref"] == ref

@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./clinic.db"
     clinic_timezone: str = "Asia/Karachi"
 
-    cors_origins: list[str] = ["http://localhost:5173"]
+    cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
     models_dir: Path = BACKEND_DIR / "models"
     nlu_model_path: Path = BACKEND_DIR / "models" / "nlu.joblib"

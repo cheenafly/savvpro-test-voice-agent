@@ -24,6 +24,7 @@ backend/models/*
 # Frontend
 node_modules/
 dist/
+*.tsbuildinfo
 
 # OS / editor
 .DS_Store

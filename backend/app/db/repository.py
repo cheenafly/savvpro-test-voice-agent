@@ -298,16 +298,24 @@ def list_slots(
 
 
 def list_upcoming_appointments(
-    session: Session, now: datetime | None = None, limit: int = 50
+    session: Session,
+    now: datetime | None = None,
+    limit: int = 50,
+    newest_first: bool = False,
 ) -> list[Appointment]:
-    """Booked appointments that haven't started yet, soonest first."""
+    """Booked appointments that haven't started yet: soonest first, or most recently booked."""
     now = now or clinic_now()
+    order = (
+        (Appointment.created_at.desc(), Appointment.id.desc())
+        if newest_first
+        else (Slot.start_time,)
+    )
     return list(
         session.scalars(
             select(Appointment)
             .join(Appointment.slot)
             .where(Appointment.status == AppointmentStatus.BOOKED, Slot.start_time > now)
-            .order_by(Slot.start_time)
+            .order_by(*order)
             .limit(limit)
         )
     )

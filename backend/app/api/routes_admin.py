@@ -1,7 +1,7 @@
 """Read-only views of the clinic database for the UI side panel."""
 
 import datetime as dt
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -33,8 +33,11 @@ def list_slots(db: Db, department: str | None = None, date: dt.date | None = Non
 
 @router.get("/appointments")
 def list_appointments(
-    db: Db, conversation: Annotated[ConversationService, Depends(get_conversation)]
+    db: Db,
+    conversation: Annotated[ConversationService, Depends(get_conversation)],
+    order: Literal["start", "recent"] = "start",
 ) -> list[AppointmentOut]:
+    """Upcoming bookings, soonest first; ``order=recent`` puts the newest bookings first."""
     return [
         AppointmentOut(
             booking_ref=a.booking_ref,
@@ -45,5 +48,7 @@ def list_appointments(
             department=a.slot.doctor.department.name,
             status=a.status.value,
         )
-        for a in repository.list_upcoming_appointments(db, now=conversation.now())
+        for a in repository.list_upcoming_appointments(
+            db, now=conversation.now(), newest_first=order == "recent"
+        )
     ]

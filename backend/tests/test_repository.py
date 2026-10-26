@@ -383,3 +383,16 @@ def test_list_upcoming_appointments_skips_past_and_cancelled(seeded):
     after_early = early.start_time + timedelta(minutes=1)
     refs = [a.booking_ref for a in repo.list_upcoming_appointments(seeded, now=after_early)]
     assert refs == [kept.booking_ref]
+
+
+def test_list_upcoming_appointments_newest_first(seeded):
+    # booked first but sooner, then booked later for a later day
+    sooner = book(seeded, first_free_slot(seeded, "ENT", day=TUESDAY))
+    later_day = first_free_slot(seeded, "ENT", day=TUESDAY + timedelta(days=2))
+    latest = repo.book_slot(
+        seeded, later_day.id, "B", "03004444444", now=NOW + timedelta(minutes=5)
+    )
+    soonest = repo.list_upcoming_appointments(seeded, now=NOW)
+    assert [a.booking_ref for a in soonest] == [sooner.booking_ref, latest.booking_ref]
+    newest = repo.list_upcoming_appointments(seeded, now=NOW, newest_first=True)
+    assert [a.booking_ref for a in newest] == [latest.booking_ref, sooner.booking_ref]
