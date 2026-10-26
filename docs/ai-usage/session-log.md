@@ -159,3 +159,43 @@ with `/cost` or `/usage` at the end of each session (and `npx ccusage` for total
   still worked because the entities carried it, but it is worth more training data.
 - **To do in Phase 7:** pin versions (`faster-whisper`, `av`, `piper-tts`) now that the
   combination is known to work with the decoder workaround.
+
+## Final phase — booking coverage, web client, CI, docs
+
+- **Booking intent gap fixed:** 25 booking utterances that combine department + date + time of
+  day were added (1,726 → 1,751). "I need a cardiologist next tuesday morning" went from
+  `nlu_fallback` (0.44) to `book_appointment` (0.99) and has a regression test. Held-out
+  accuracy 0.900, 5-fold CV 0.912 ± 0.010; every intent ≥ 0.86 in CV, two (out_of_scope,
+  reschedule) just under 0.85 on the noisy held-out split, reported as is.
+- Speech packages pinned to the tested versions (faster-whisper 1.2.1, ctranslate2 4.8.4,
+  av 19.0.2, piper-tts 1.8.0).
+- **Node.js wasn't installed** (and no Homebrew). The official Node 22 LTS binary was
+  downloaded into `~/.local/node` after checking its SHA-256 against nodejs.org's list; nothing
+  system-wide was changed.
+- **The web client was tested in a real browser**, not just with vitest: headless Chrome
+  driven over the DevTools protocol, holding the push-to-talk button while a Piper-generated
+  WAV played as the microphone. That run found three real problems the unit tests didn't:
+  - **Whisper hallucination ended a call.** On a mostly silent recording Whisper produced
+    "Thank you for watching. Bye now." (a known Whisper habit learned from video subtitles),
+    and "bye" hung up. Fix: drop segments Whisper itself marks as non-speech
+    (`no_speech_prob > 0.6` with `avg_logprob < -1`) and known subtitle phrases; tested with
+    stand-in segments.
+  - **The new booking wasn't visible** in the appointments panel: it listed the 50 soonest
+    appointments, and the seed pre-books 30% of three weeks. Added `order=recent` to the API so
+    the panel shows the newest bookings first, highlighted.
+  - A React warning: a `useEffect` arrow returned a value.
+- **Harness problems that were not app bugs (worth knowing for the write-up):** Chrome's
+  sandbox silently blocked the fake-microphone WAV (recorded pure silence), and the fake mic
+  loops the file on its own clock, so push-to-talk caught random fragments ("I'm your
+  rheologist…"). The final harness stubs `getUserMedia` to play the WAV from the moment the
+  button is pressed: 3/3 runs then transcribed the sentence exactly and completed the booking.
+- **Docs written by the AI had invented details, caught by running them:**
+  - The README's example conversation assumed changing the date re-offers times; it actually
+    keeps the chosen time and doctor. The table was rewritten from a real CLI run.
+  - DESIGN.md claimed "oh three hundred" normalizes to "0300"; it doesn't, so it was removed.
+    Every other quoted example was checked against the code.
+- **Changed at the user's request:** the agent now greets with "Hello" and ends with "Bye"
+  instead of "Assalam o Alaikum" / "Allah Hafiz". Callers who say those are still understood.
+- **Deviations:** CORS also allows `127.0.0.1:5173`; the greeting/hallucination fix went into
+  its own `fix:` commit rather than the web-client commit; UI screenshots are in
+  `docs/screenshots/`.
