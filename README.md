@@ -14,7 +14,9 @@ a small scikit-learn classifier trained on our own examples, and a state machine
 OpenAI, Anthropic, Gemini or any hosted AI API. Speech recognition and synthesis also run
 locally, so the whole thing works offline after a one-time model download.
 
-> All data is fake: the clinic, its address, the doctors and the patients are invented.
+> All data is fake: the clinic, its address, the doctors, the patients and their phone numbers are
+> invented. The one real-world number is **1122**, Pakistan's public Rescue emergency line. The
+> emergency reply gives it on purpose.
 
 ![Web client after a voice booking](docs/screenshots/web-client-voice-turn.png)
 
