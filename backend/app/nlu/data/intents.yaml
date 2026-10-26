@@ -1,0 +1,605 @@
+# Training utterances for the intent classifier (app/nlu/train.py).
+# Written as callers actually speak: informal, Pakistani-English phrasing,
+# some Urdu words, and speech-to-text mistakes (split/misspelled words, missing
+# punctuation). All names and numbers are invented.
+
+book_appointment:
+  - i want to book an appointment
+  - i would like to make an appointment
+  - can i book an appointment please
+  - i need to see a doctor
+  - book me with a dermatologist next monday at 10 am
+  - i want to take appointment with heart doctor
+  - kindly book an appointment for me
+  - please book appointment for my son with child specialist
+  - need appointment with cardiologist tomorrow
+  - can you book me in for a check up
+  - i want to see the skin doctor
+  - appointment chahiye doctor ke saath
+  - i'd like to schedule a visit
+  - can i get an appointment for friday
+  - book an appoint ment for me
+  - i want to make a apointment
+  - book a slot with ent specialist
+  - i need to consult a doctor about my back pain
+  - can i come in to see a gynae doctor
+  - set up an appointment with dr saima please
+  - i want appointment for my mother
+  - please make a booking with the general physician
+  - is it possible to book a time with orthopedic
+  - i wanna book a doctor
+  - schedule me an appointment for thursday morning
+  - i need a new appointment
+  - book me in with pediatrician for my daughter
+  - hello i want to book appointment
+  - i need to get checked by a doctor
+  - can you fix an appointment for me
+  - doctor sahab se milna hai appointment chahiye
+  - i'd like to see a cardiology doctor next week
+  - booking karni hai
+  - make an appointment for me in skin department
+
+reschedule_appointment:
+  - i need to reschedule my appointment
+  - can i move my appointment to another day
+  - i want to change my appointment time
+  - please postpone my appointment
+  - reschedule my booking sc 4f7k
+  - can you shift my appointment to next week
+  - i can't make it on monday can we move it
+  - change my appointment date please
+  - i have an appointment but i need a different time
+  - re schedule my appointment
+  - reskedule my appointment please
+  - i want to push my appointment to friday
+  - move my booking to the afternoon
+  - can i change my existing appointment
+  - my appointment is on tuesday i want to change it
+  - i booked for tomorrow but want another day
+  - can my appointment be rescheduled
+  - i need to rearrange my appointment
+  - please change the date of my booking
+  - appointment ka time change karna hai
+  - i want to bring my appointment forward
+  - need to reschedule booking reference sc 7k2m
+  - can you move my visit with dr imran
+  - i want to change my booking
+  - can you reschedule me to a later date
+  - my booking needs to be changed to thursday
+  - postpone my booking by a few days
+  - i'd like a different slot for my existing appointment
+  - change my existing booking please
+  - i have to shift my appointment
+  - reschedule karna hai
+
+cancel_appointment:
+  - i want to cancel my appointment
+  - please cancel my booking
+  - cancel my appointment for tomorrow
+  - i won't be able to come please cancel
+  - can you cancel my appointment sc 4f7k
+  - i need to cancel my visit
+  - cancle my appointment
+  - cancel the booking i made
+  - i don't need the appointment anymore please cancel it
+  - cancel my appointment with the dermatologist
+  - delete my appointment
+  - i would like to cancel my booking
+  - my appointment should be cancelled
+  - cancel booking reference sc 9p3q
+  - i want to call off my appointment
+  - please remove my appointment
+  - appointment cancel kar dein
+  - i booked an appointment by mistake cancel it
+  - cancel my appointment on monday
+  - can i cancel my existing booking
+  - we won't come please cancel the appointment
+  - cancel my son's appointment
+  - cancel the appointment under my number
+  - i am cancelling my appointment
+  - kindly cancel my appointment
+  - cancel my booking for friday please
+  - i'd like to cancel the appointment i have
+  - cancel my reservation with the doctor
+  - booking cancel karni hai
+  - no longer need my booking cancel it please
+
+check_availability:
+  - does cardiology have anything thursday
+  - are there any free slots tomorrow
+  - is dr saima available on monday
+  - what times are available
+  - when is the next available slot
+  - do you have any openings this week
+  - is there anything free in the afternoon
+  - what slots do you have for dermatology
+  - any availability on friday morning
+  - is the ent doctor free tomorrow
+  - when can i see the cardiologist
+  - what is the earliest appointment
+  - is there any slot available today
+  - which days is the pediatrician available
+  - do you have something on saturday
+  - check if dr imran has time on tuesday
+  - is 3 pm free on wednesday
+  - available slots for orthopedic next week
+  - kya kal koi slot khali hai
+  - what are the free times on monday
+  - anything open after lunch
+  - is the gynae doctor available this week
+  - show me available times
+  - can you check availability for skin doctor
+  - when is the doctor free
+  - is there a slot at 10 tomorrow
+  - what's the soonest i can get in
+  - are any appointments left for friday
+  - any free time with general physician
+  - kab available hain doctor
+
+clinic_hours:
+  - what are your opening hours
+  - when is the clinic open
+  - what time do you close
+  - are you open on sunday
+  - what are the clinic timings
+  - till what time are you open
+  - what time do you open in the morning
+  - are you open on saturday
+  - what are your working hours
+  - is the clinic open today
+  - clinic kab khulta hai
+  - what time does the clinic close on saturday
+  - opening times please
+  - are you open at lunch time
+  - do you work on weekends
+  - what days are you open
+  - timing kya hai
+  - are you open tomorrow
+  - how late are you open
+  - what are the hours for the clinic
+  - when do you start in the morning
+  - what is the closing time
+  - do you have a lunch break
+  - are you open on friday evening
+  - hours of operation
+  - is the clinic closed on sunday
+  - when does the clinic open
+  - what are your timings on weekdays
+
+clinic_location:
+  - where is the clinic
+  - what is your address
+  - how do i get to the clinic
+  - where are you located
+  - can you tell me the location
+  - what's the address of shifa care
+  - which area is the clinic in
+  - give me directions to the clinic
+  - clinic kahan hai
+  - is there parking at the clinic
+  - how can i reach you
+  - send me the address
+  - where exactly is the clinic
+  - what is the nearest landmark
+  - which floor is the clinic on
+  - is it near the main road
+  - where do i have to come
+  - location bata dein
+  - what city are you in
+  - what is the clinic address
+  - how far is the clinic from the station
+  - where is shifa care clinic
+  - can you share the location
+  - which street are you on
+  - where should i go for my appointment
+  - address kya hai
+
+list_departments:
+  - what departments do you have
+  - which specialists are available
+  - what kind of doctors do you have
+  - list your departments
+  - what services do you offer
+  - do you have a dentist
+  - which specialties are there
+  - do you have a skin specialist
+  - what departments are there in the clinic
+  - is there an eye doctor
+  - what type of treatment do you provide
+  - do you have a heart department
+  - which departments
+  - tell me the departments
+  - do you have ent
+  - do you have child specialist
+  - kaun kaun se department hain
+  - what specialties does the clinic cover
+  - do you have orthopedics
+  - what areas do you treat
+  - do you have a gynecologist at the clinic
+  - is there a psychiatrist
+  - which fields do your doctors cover
+  - what can i see a doctor for here
+  - list of specialties please
+  - what medical departments are available
+
+list_doctors:
+  - which doctors do you have
+  - who are the doctors in cardiology
+  - list the doctors please
+  - who is the dermatologist
+  - what are the names of your doctors
+  - which doctor is in ent
+  - who are the child specialists
+  - tell me the doctors in orthopedics
+  - which doctors work in general medicine
+  - is there a female doctor
+  - who is the gynae doctor
+  - doctor ka naam kya hai
+  - how many doctors do you have
+  - who will i be seeing
+  - which doctors are in skin department
+  - name of the heart doctor
+  - who are your specialists
+  - does dr saima work there
+  - is dr imran a cardiologist
+  - list of doctors in pediatrics
+  - who are the ent doctors
+  - give me the doctor names
+  - which doctors are available in the clinic
+  - who is the best doctor for back pain
+  - what doctors are there for kids
+  - kaun se doctor hain
+
+inform:
+  - cardiology
+  - next monday
+  - at 3 pm
+  - my name is ali raza
+  - 03001234567
+  - sc 4f7k
+  - tomorrow morning
+  - with dr saima
+  - the 5th
+  - afternoon is better
+  - heart doctor
+  - skin specialist please
+  - it's for my son
+  - sana malik
+  - my number is 0321 5551234
+  - zero three zero zero five five five one two three four
+  - friday at 11
+  - 10 30 am
+  - this is hamza yousaf
+  - dermatology please
+  - in the morning
+  - on thursday
+  - my phone number is 03335550199
+  - the reference is sc 7k2m
+  - half past 2
+  - around 4
+  - mera naam ayesha hai
+  - pediatrics
+  - the 12th of next month
+  - any doctor is fine
+  - 2 pm on wednesday
+  - name is omar farooq and number is 03015550123
+  - general physician
+  - the first one
+  - the second slot
+  - the 9 o'clock one
+
+affirm:
+  - yes
+  - yeah
+  - yes please
+  - that's correct
+  - sure
+  - ok
+  - okay go ahead
+  - yes that's right
+  - correct
+  - absolutely
+  - haan
+  - ji haan
+  - yes book it
+  - sounds good
+  - perfect
+  - that works
+  - yep
+  - alright
+  - theek hai
+  - yes confirm
+  - definitely
+  - please do
+  - of course
+  - yes that is fine
+  - right
+  - ya sure
+  - yes yes
+  - haan ji theek hai
+  - that's perfect thanks
+  - go ahead and book it
+
+deny:
+  - no
+  - nope
+  - no thanks
+  - that's wrong
+  - no that's not right
+  - not correct
+  - nahi
+  - no no
+  - nah
+  - not really
+  - incorrect
+  - no thank you
+  - don't book it
+  - no i don't want that
+  - that is not what i said
+  - ji nahi
+  - no that's incorrect
+  - negative
+  - nahin
+  - wrong
+  - not that one
+  - no don't
+  - that's not it
+  - nope not right
+  - no that is wrong
+  - not like that
+
+change_request:
+  - actually make it friday
+  - no wait 4 pm instead
+  - can we change the time
+  - change the date to monday
+  - i want a different doctor
+  - make it tuesday instead
+  - switch to the afternoon
+  - sorry i meant thursday
+  - can you change it to 11
+  - actually i prefer the morning
+  - change the department to ent
+  - no make it 3 30
+  - instead of monday make it wednesday
+  - let's do a later time
+  - i'd rather go with dr imran
+  - actually change my phone number
+  - wait my name is spelled differently
+  - can we do earlier
+  - make it next week instead
+  - i changed my mind make it saturday
+  - not 10 make it 11
+  - can i pick a different time
+  - change the time to half past 2
+  - one hour later please
+  - actually the other doctor
+  - different day please
+  - update the number to 03005550188
+  - scratch that make it the 15th
+  - can you make it a bit earlier
+  - oh sorry i meant cardiology not dermatology
+
+greet:
+  - hello
+  - hi
+  - hey
+  - assalam o alaikum
+  - salam
+  - good morning
+  - good afternoon
+  - good evening
+  - hello is this shifa care
+  - hi there
+  - aoa
+  - hello hello
+  - hey there
+  - hi good morning
+  - salaam
+  - assalamualaikum
+  - hello anyone there
+  - hello can you hear me
+  - hi is this the clinic
+  - good morning sir
+  - hey how are you
+  - hello ji
+  - hi hello
+  - salam alaikum
+  - hello good afternoon
+  - hi how are you doing
+
+goodbye:
+  - bye
+  - goodbye
+  - allah hafiz
+  - khuda hafiz
+  - see you
+  - that's all
+  - nothing else
+  - bye bye
+  - that's all thank you bye
+  - ok bye
+  - have a nice day
+  - i'm done
+  - that is all
+  - see you later
+  - talk to you later
+  - end the call
+  - you can hang up
+  - no that's it bye
+  - that will be all
+  - ok thanks bye
+  - nothing more
+  - that's everything
+  - take care
+  - good bye
+  - acha allah hafiz
+  - all done thanks
+
+thank_you:
+  - thank you
+  - thanks
+  - thank you so much
+  - thanks a lot
+  - shukriya
+  - thank you very much
+  - jazakallah
+  - thanks for your help
+  - much appreciated
+  - thank u
+  - thanks so much
+  - many thanks
+  - thank you ji
+  - bohat shukriya
+  - thanks for helping me
+  - thank you for the information
+  - great thanks
+  - thank you for booking
+  - appreciate it
+  - thankyou
+  - thanks a ton
+  - that's helpful thanks
+  - thanks a million
+  - thank you that helps
+  - cheers
+  - ok thank you
+
+repeat:
+  - can you repeat that
+  - say that again
+  - what
+  - sorry
+  - pardon
+  - come again
+  - i didn't catch that
+  - repeat please
+  - what did you say
+  - one more time please
+  - dobara bolein
+  - sorry i didn't hear you
+  - can you say it again
+  - huh
+  - please repeat
+  - what was that
+  - excuse me
+  - i missed that
+  - could you repeat the slots
+  - say again
+  - repeat the times please
+  - phir se bataein
+  - sorry what
+  - could you say that one more time
+  - i didn't get that
+  - can you repeat it slowly
+
+human_agent:
+  - i want to talk to a human
+  - can i speak to a real person
+  - connect me to the receptionist
+  - transfer me to an operator
+  - let me talk to someone
+  - i want to speak with staff
+  - put me through to a person
+  - human please
+  - i don't want to talk to a machine
+  - get me a real person
+  - operator
+  - can i talk to someone at the front desk
+  - connect me with an agent
+  - kisi insaan se baat karwa dein
+  - i need to speak to the manager
+  - talk to representative
+  - this is not working let me talk to a person
+  - is there a real person i can talk to
+  - transfer the call please
+  - speak to someone please
+  - i want a human agent
+  - can you connect me to customer service
+  - give me the reception
+  - real person please
+  - i want to talk to the doctor's assistant
+  - let me speak to a human being
+
+emergency:
+  - i have chest pain
+  - i can't breathe
+  - my father is having a heart attack
+  - she is bleeding heavily
+  - he is unconscious
+  - this is an emergency
+  - someone fainted
+  - my child is not breathing
+  - i think it's a stroke
+  - he is having a seizure
+  - there was an accident and he is bleeding
+  - severe chest pain please help
+  - my mother collapsed
+  - i took an overdose
+  - he swallowed poison
+  - difficulty breathing
+  - she passed out
+  - emergency please send help
+  - i need an ambulance
+  - bleeding won't stop
+  - my wife is not responding
+  - very bad chest pain and sweating
+  - my baby is choking
+  - i want to kill myself
+  - he fell and hit his head and is not waking up
+  - help urgent emergency
+
+abort:
+  - never mind
+  - forget it
+  - leave it
+  - i don't want to book anymore
+  - stop
+  - start over
+  - i changed my mind
+  - rehne do
+  - cancel that
+  - forget about it
+  - nevermind
+  - let's stop here
+  - i don't want to continue
+  - drop it
+  - never mind i'll call later
+  - forget the booking
+  - stop this
+  - i'll do it later
+  - not now
+  - leave it for now
+  - let's start again
+  - abort
+  - i don't want an appointment anymore
+  - skip it
+  - chhoro
+  - cancel this
+
+out_of_scope:
+  - what's the weather today
+  - tell me a joke
+  - who won the cricket match
+  - can you order a pizza
+  - what is the price of petrol
+  - do you sell medicines
+  - how much is the consultation fee
+  - do you accept insurance
+  - what is the capital of france
+  - play some music
+  - can you book a taxi
+  - what's your name
+  - are you a robot
+  - i want to buy a phone
+  - who is the prime minister
+  - recharge my mobile
+  - what is two plus two
+  - do you deliver food
+  - can i get a refund
+  - what is the dollar rate today
+  - sing a song
+  - how old are you
+  - where can i buy shoes
+  - do you have a pharmacy
+  - my internet is not working
+  - what time is the match tonight

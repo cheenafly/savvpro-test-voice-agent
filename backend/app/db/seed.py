@@ -10,9 +10,10 @@ from datetime import date, datetime, time, timedelta
 
 from sqlalchemy.orm import Session
 
+from app.clock import clinic_now
 from app.db.base import Base
 from app.db.models import Appointment, AppointmentStatus, Department, Doctor, Patient, Slot
-from app.db.repository import clinic_now, generate_booking_ref
+from app.db.repository import generate_booking_ref
 from app.db.session import SessionLocal, engine, init_db
 
 CLINIC_NAME = "Shifa Care Clinic"

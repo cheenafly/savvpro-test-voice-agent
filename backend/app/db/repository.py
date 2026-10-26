@@ -7,13 +7,12 @@ the clock; it defaults to the current clinic-local time.
 
 import random
 from datetime import date, datetime, time, timedelta
-from zoneinfo import ZoneInfo
 
 from sqlalchemy import Select, func, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, contains_eager
 
-from app.config import get_settings
+from app.clock import clinic_now
 from app.db.models import Appointment, AppointmentStatus, Department, Doctor, Patient, Slot
 
 # No 0/O or 1/I so references survive being read aloud and transcribed.
@@ -34,11 +33,6 @@ class SlotUnavailableError(RepositoryError):
 
 class AppointmentNotFoundError(RepositoryError):
     """No active (booked) appointment matches."""
-
-
-def clinic_now() -> datetime:
-    tz = ZoneInfo(get_settings().clinic_timezone)
-    return datetime.now(tz).replace(tzinfo=None)
 
 
 def generate_booking_ref(rng: random.Random | None = None) -> str:
