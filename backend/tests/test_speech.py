@@ -64,11 +64,12 @@ class FakeWhisperModel:
 
     def transcribe(self, audio, **kwargs):
         self.calls.append({"audio": audio, **kwargs})
-        segments = [
-            SimpleNamespace(text=" Book me with ", avg_logprob=math.log(0.9)),
-            SimpleNamespace(text=" Dr. Saima Rauf.", avg_logprob=math.log(0.7)),
-        ]
-        return iter(segments), None
+        return iter(self.segments), None
+
+    segments = [
+        SimpleNamespace(text=" Book me with ", avg_logprob=math.log(0.9), no_speech_prob=0.01),
+        SimpleNamespace(text=" Dr. Saima Rauf.", avg_logprob=math.log(0.7), no_speech_prob=0.02),
+    ]
 
 
 @pytest.fixture
@@ -90,6 +91,30 @@ def test_whisper_uses_vad_prompt_and_english(fake_whisper):
     assert isinstance(call["audio"], np.ndarray)
     assert result.text == "Book me with Dr. Saima Rauf."
     assert result.confidence == pytest.approx(0.8)
+
+
+@pytest.mark.parametrize(
+    "segment",
+    [
+        SimpleNamespace(text=" Thank you for watching.", avg_logprob=-0.3, no_speech_prob=0.1),
+        SimpleNamespace(text=" Thanks for watching!", avg_logprob=-0.2, no_speech_prob=0.1),
+        SimpleNamespace(text=" Please subscribe.", avg_logprob=-0.4, no_speech_prob=0.2),
+        SimpleNamespace(
+            text=" Bye now.", avg_logprob=-1.4, no_speech_prob=0.8
+        ),  # unsure + no speech
+    ],
+)
+def test_whisper_drops_hallucinated_segments(fake_whisper, monkeypatch, segment):
+    real = SimpleNamespace(text=" Cancel my booking.", avg_logprob=-0.2, no_speech_prob=0.01)
+    monkeypatch.setattr(FakeWhisperModel, "segments", [segment, real])
+    assert FasterWhisperSTT().transcribe(make_wav()).text == "Cancel my booking."
+
+
+def test_whisper_keeps_quiet_but_confident_speech(fake_whisper, monkeypatch):
+    # High no_speech_prob alone isn't enough: Whisper was still sure of the words.
+    said = SimpleNamespace(text=" Yes.", avg_logprob=-0.3, no_speech_prob=0.7)
+    monkeypatch.setattr(FakeWhisperModel, "segments", [said])
+    assert FasterWhisperSTT().transcribe(make_wav()).text == "Yes."
 
 
 def test_build_stt_reads_settings(fake_whisper, tmp_path):

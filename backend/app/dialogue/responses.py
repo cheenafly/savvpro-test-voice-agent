@@ -11,7 +11,7 @@ from app.clinic import CLINIC_ADDRESS, CLINIC_NAME, OPENING_HOURS
 
 TEMPLATES: dict[str, list[str]] = {
     "greeting": [
-        f"Assalam o Alaikum, thank you for calling {CLINIC_NAME}. I can book, change or cancel "
+        f"Hello, thank you for calling {CLINIC_NAME}. I can book, change or cancel "
         "an appointment, or answer questions about the clinic. How can I help you today?",
         f"Hello, you've reached {CLINIC_NAME}. I can book, reschedule or cancel appointments "
         "and tell you about the clinic. What can I do for you?",
@@ -156,8 +156,8 @@ TEMPLATES: dict[str, list[str]] = {
     ],
     "aborted": ["No problem, I've stopped that.", "Okay, I've cancelled that request."],
     "goodbye": [
-        "Thank you for calling. Take care, goodbye!",
-        "Thanks for calling Shifa Care. Allah Hafiz!",
+        "Thank you for calling. Take care, bye!",
+        "Thanks for calling Shifa Care. Bye!",
     ],
     "call_over": ["This call has ended."],
     "welcome": ["You're welcome."],

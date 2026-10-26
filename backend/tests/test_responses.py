@@ -41,3 +41,8 @@ def test_every_template_has_a_variant_and_is_plain_text():
     for key, variants in TEMPLATES.items():
         assert variants, key
         assert all("<" not in v for v in variants), key  # no SSML
+
+
+def test_greeting_says_hello_and_goodbye_says_bye():
+    assert all(t.startswith("Hello") for t in TEMPLATES["greeting"])
+    assert all(t.endswith("bye!") or t.endswith("Bye!") for t in TEMPLATES["goodbye"])

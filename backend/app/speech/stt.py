@@ -3,6 +3,7 @@
 import io
 import logging
 import math
+import re
 from typing import Protocol
 
 import numpy as np
@@ -33,6 +34,23 @@ def build_initial_prompt(departments: list[str], doctors: list[str]) -> str:
 
 
 SAMPLE_RATE = 16_000  # what Whisper expects
+
+# Whisper's own "probably not speech" thresholds (same values the reference implementation uses).
+NO_SPEECH_THRESHOLD = 0.6
+LOGPROB_THRESHOLD = -1.0
+# Phrases Whisper invents on near-silence (it learned them from video subtitles). Without this,
+# a silent push-to-talk can come back as "Thank you for watching. Bye now." and end the call.
+_HALLUCINATIONS = re.compile(
+    r"^\W*(thanks? (you )?(so much )?for watching|please subscribe|subscribe to|"
+    r"like and subscribe|see you (in the )?next (video|time)|subtitles? by)",
+    re.IGNORECASE,
+)
+
+
+def _is_hallucination(segment) -> bool:
+    if segment.no_speech_prob > NO_SPEECH_THRESHOLD and segment.avg_logprob < LOGPROB_THRESHOLD:
+        return True
+    return bool(_HALLUCINATIONS.match(segment.text.strip()))
 
 
 def decode_audio(audio: bytes) -> np.ndarray:
@@ -92,7 +110,8 @@ class FasterWhisperSTT:
             initial_prompt=self.initial_prompt,
             condition_on_previous_text=False,
         )
-        segments = list(segments)  # the generator does the actual decoding
+        # The generator does the actual decoding.
+        segments = [s for s in segments if not _is_hallucination(s)]
         text = " ".join(s.text.strip() for s in segments).strip()
         if not segments:
             return Transcription(text=text, confidence=None)
